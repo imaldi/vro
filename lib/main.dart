@@ -48,61 +48,69 @@ class MainWidget extends StatefulWidget {
 
 class _MainWidgetState extends State<MainWidget> {
   var currentUrl = "https://catalstudio.com/";
-  var controller = WebViewController()
-    ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    ..setBackgroundColor(const Color(0x00000000))
-    ..setNavigationDelegate(
-      NavigationDelegate(
-        onProgress: (int progress) {
-          // Update loading bar.
-        },
-        onPageStarted: (String url) {},
-        onPageFinished: (String url) {},
-        onWebResourceError: (WebResourceError error) {},
-        onNavigationRequest: (NavigationRequest request) async {
-          String originalUrl = request.url;
-          Uri uri = Uri.parse(originalUrl);
-          String pathAfterBaseUrl = uri.path;
+  @override
+  void initState() {
+    // TODO: implement initStatesuper.initState();
+    controller..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onWebResourceError: (WebResourceError error) {},
+          onNavigationRequest: (NavigationRequest request) async {
+            String originalUrl = request.url;
+            Uri uri = Uri.parse(originalUrl);
+            String pathAfterBaseUrl = uri.path;
 
-          if (request.url.startsWith('https://catalstudio.com/')) {
-            var theBaseWeb = Uri.https('catalstudio.com',pathAfterBaseUrl);
-            if (await canLaunchUrl(theBaseWeb)) {
-              await launchUrl(theBaseWeb);
-            } else {
-              throw 'Could not launch $theBaseWeb';
+            if (request.url.startsWith('https://catalstudio.com/')) {
+              var theBaseWeb = Uri.https('catalstudio.com',pathAfterBaseUrl);
+              if (await canLaunchUrl(theBaseWeb)) {
+                // await launchUrl(theBaseWeb);
+                setState(() {
+                  currentUrl = request.url;
+                });
+              } else {
+                throw 'Could not launch $theBaseWeb';
+              }
+              return NavigationDecision.navigate;
             }
-            return NavigationDecision.navigate;
-          }
-          else if (request.url.startsWith('whatsapp:')) {
-            Uri whatsappUri = Uri(scheme: 'whatsapp', path: 'send', queryParameters: {
-              'phone': '+6288899990000', // Replace with the phone number
-              'text': 'Hello, this is a WhatsApp message!', // Replace with your message
-            });
+            else if (request.url.startsWith('whatsapp:')) {
+              Uri whatsappUri = Uri(scheme: 'whatsapp', path: 'send', queryParameters: {
+                'phone': '+6288899990000', // Replace with the phone number
+                'text': 'Hello, this is a WhatsApp message!', // Replace with your message
+              });
               if (await canLaunchUrl(whatsappUri)) {
                 await launchUrl(whatsappUri);
-            } else {
-              throw 'Could not launch $whatsappUri';
+              } else {
+                throw 'Could not launch $whatsappUri';
+              }
+              return NavigationDecision.navigate;
             }
-            return NavigationDecision.navigate;
-          }
-          return NavigationDecision.prevent;
-          // if (request.url.startsWith('whatsapp:')) {
-          //   Uri whatsappUri = Uri(scheme: 'whatsapp', path: 'send', queryParameters: {
-          //     'phone': '+6288899990000', // Replace with the phone number
-          //     'text': 'Hello, this is a WhatsApp message!', // Replace with your message
-          //   });
-          //     if (await canLaunchUrl(whatsappUri)) {
-          //       await launchUrl(whatsappUri);
-          //   } else {
-          //     throw 'Could not launch $whatsappUri';
-          //   }
-          //   return NavigationDecision.navigate;
-          // }
-          // return NavigationDecision.prevent;
-        },
-      ),
-    )
-    ..loadRequest(Uri.parse('https://catalstudio.com/'));
+            return NavigationDecision.prevent;
+            // if (request.url.startsWith('whatsapp:')) {
+            //   Uri whatsappUri = Uri(scheme: 'whatsapp', path: 'send', queryParameters: {
+            //     'phone': '+6288899990000', // Replace with the phone number
+            //     'text': 'Hello, this is a WhatsApp message!', // Replace with your message
+            //   });
+            //     if (await canLaunchUrl(whatsappUri)) {
+            //       await launchUrl(whatsappUri);
+            //   } else {
+            //     throw 'Could not launch $whatsappUri';
+            //   }
+            //   return NavigationDecision.navigate;
+            // }
+            // return NavigationDecision.prevent;
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse('https://catalstudio.com/'));
+  }
+  var controller = WebViewController();
+
 
   @override
   Widget build(BuildContext context) {
