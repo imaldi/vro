@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -46,6 +47,7 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
+  var currentUrl = "https://catalstudio.com/";
   var controller = WebViewController()
     ..setJavaScriptMode(JavaScriptMode.unrestricted)
     ..setBackgroundColor(const Color(0x00000000))
@@ -58,7 +60,20 @@ class _MainWidgetState extends State<MainWidget> {
         onPageFinished: (String url) {},
         onWebResourceError: (WebResourceError error) {},
         onNavigationRequest: (NavigationRequest request) async {
-          if (request.url.startsWith('whatsapp:')) {
+          String originalUrl = request.url;
+          Uri uri = Uri.parse(originalUrl);
+          String pathAfterBaseUrl = uri.path;
+
+          if (request.url.startsWith('https://catalstudio.com/')) {
+            var theBaseWeb = Uri.https('catalstudio.com',pathAfterBaseUrl);
+            if (await canLaunchUrl(theBaseWeb)) {
+              await launchUrl(theBaseWeb);
+            } else {
+              throw 'Could not launch $theBaseWeb';
+            }
+            return NavigationDecision.navigate;
+          }
+          else if (request.url.startsWith('whatsapp:')) {
             Uri whatsappUri = Uri(scheme: 'whatsapp', path: 'send', queryParameters: {
               'phone': '+6288899990000', // Replace with the phone number
               'text': 'Hello, this is a WhatsApp message!', // Replace with your message
@@ -71,6 +86,19 @@ class _MainWidgetState extends State<MainWidget> {
             return NavigationDecision.navigate;
           }
           return NavigationDecision.prevent;
+          // if (request.url.startsWith('whatsapp:')) {
+          //   Uri whatsappUri = Uri(scheme: 'whatsapp', path: 'send', queryParameters: {
+          //     'phone': '+6288899990000', // Replace with the phone number
+          //     'text': 'Hello, this is a WhatsApp message!', // Replace with your message
+          //   });
+          //     if (await canLaunchUrl(whatsappUri)) {
+          //       await launchUrl(whatsappUri);
+          //   } else {
+          //     throw 'Could not launch $whatsappUri';
+          //   }
+          //   return NavigationDecision.navigate;
+          // }
+          // return NavigationDecision.prevent;
         },
       ),
     )
@@ -88,7 +116,7 @@ class _MainWidgetState extends State<MainWidget> {
         return false;
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Flutter Simple Example')),
+        // appBar: AppBar(title: const Text('Flutter Simple Example')),
         body: WebViewWidget(controller: controller),
       ),
     );
