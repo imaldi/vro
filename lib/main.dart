@@ -78,11 +78,18 @@ class _MainWidgetState extends State<MainWidget> {
               }
               return NavigationDecision.navigate;
             }
-            else if (request.url.startsWith('whatsapp:')) {
-              Uri whatsappUri = Uri(scheme: 'whatsapp', path: 'send', queryParameters: {
-                'phone': '+6288899990000', // Replace with the phone number
-                'text': 'Hello, this is a WhatsApp message!', // Replace with your message
-              });
+            else if (request.url.startsWith('https://wa.me/')) {
+              String originalUrl = request.url;
+              Uri uri = Uri.parse(originalUrl);
+              String pathAfterBaseUrl = uri.path;
+              var theBaseWeb = Uri.https('wa.me',pathAfterBaseUrl);
+
+              Uri whatsappUri = Uri.parse(request.url);
+
+              // Uri(scheme: 'https', path: 'send', queryParameters: {
+              //   'phone': '+6288899990000', // Replace with the phone number
+              //   'text': 'Hello, this is a WhatsApp message!', // Replace with your message
+              // });
               if (await canLaunchUrl(whatsappUri)) {
                 await launchUrl(whatsappUri);
               } else {
