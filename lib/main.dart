@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Victorro',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -47,7 +47,7 @@ class MainWidget extends StatefulWidget {
 }
 
 class _MainWidgetState extends State<MainWidget> {
-  var currentUrl = "https://catalstudio.com/";
+  var currentUrl = "https://android.victorro.id/";
   @override
   void initState() {
     // TODO: implement initStatesuper.initState();
@@ -66,7 +66,7 @@ class _MainWidgetState extends State<MainWidget> {
             Uri uri = Uri.parse(originalUrl);
             String pathAfterBaseUrl = uri.path;
 
-            if (request.url.startsWith('https://catalstudio.com/')) {
+            if (request.url.startsWith('https://android.victorro.id/')) {
               var theBaseWeb = Uri.https('catalstudio.com',pathAfterBaseUrl);
               if (await canLaunchUrl(theBaseWeb)) {
                 // await launchUrl(theBaseWeb);
@@ -96,6 +96,25 @@ class _MainWidgetState extends State<MainWidget> {
                 throw 'Could not launch $whatsappUri';
               }
               return NavigationDecision.navigate;
+            } else if (request.url.startsWith('whatsapp')) {
+              String originalUrl = request.url;
+              Uri uri = Uri.parse(originalUrl);
+              String pathAfterBaseUrl = uri.path;
+
+              Uri whatsappUri =
+              // Uri.parse(request.url);
+
+              Uri(scheme: 'whatsapp', path: 'send', queryParameters: {
+                'phone': '+6282218695302',
+                'type' : 'phone_number',
+                'text': '', // Replace with your message
+              });
+              if (await canLaunchUrl(whatsappUri)) {
+                await launchUrl(whatsappUri);
+              } else {
+                throw 'Could not launch $whatsappUri';
+              }
+              return NavigationDecision.navigate;
             }
             return NavigationDecision.prevent;
             // if (request.url.startsWith('whatsapp:')) {
@@ -114,7 +133,7 @@ class _MainWidgetState extends State<MainWidget> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('https://catalstudio.com/'));
+      ..loadRequest(Uri.parse('https://android.victorro.id/'));
   }
   var controller = WebViewController();
 
